@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // ロリポップ！デプロイナウは standalone 出力が必須
+  output: "standalone",
 };
 
 export default nextConfig;

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIろりぽっぷ 画面ラフ（3 案）</title>
+<meta name="robots" content="noindex">
+<!--
+  段 2 のラフ（静的モック）。案が決まったら、画面は実物の iframe（?member= ?state= ?labels=）に置き換える。
+  参考にした型の出典: claude-work/20260914_AIまう作り直し/調査_チャットUIの型.md
+-->
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f2f2f7; --card: #fff; --soft: #e9e9ee; --label: #000; --label-2: rgba(60, 60, 67, 0.62);
+    --sep: rgba(60, 60, 67, 0.18); --tag: #ff9f0a; --tint: #007aff;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Segoe UI", system-ui, sans-serif;
+  }
+  body { margin: 0; background: var(--bg); color: var(--label); -webkit-font-smoothing: antialiased; }
+  main { max-width: 1320px; margin: 0 auto; padding: 32px 20px 96px; }
+  h1 { margin: 0 0 6px; font-size: 30px; }
+  h2 { margin: 44px 0 12px; font-size: 22px; }
+  .lead { margin: 0 0 14px; color: var(--label-2); line-height: 1.7; }
+  .box { padding: 16px 22px; border-radius: 18px; background: var(--card); line-height: 1.85; }
+  .box li { margin: 4px 0; }
+  .bar { position: sticky; top: 0; z-index: 30; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin: 14px -20px 0; padding: 10px 20px;
+         background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(20px); }
+  .tabs { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--soft); }
+  .tabs button { border: 0; padding: 8px 16px; border-radius: 999px; background: transparent; font: 600 14px/1 inherit; cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--card); box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+  .bar label { font-size: 14px; color: var(--label-2); display: inline-flex; gap: 6px; align-items: center; }
+  .variant-lead { margin: 18px 0 8px; padding: 14px 18px; border-radius: 16px; background: var(--card); line-height: 1.75; font-size: 14px; }
+  .variant-lead b { font-size: 16px; }
+  .screens { display: grid; grid-template-columns: repeat(4, minmax(250px, 1fr)); gap: 16px; }
+  @media (max-width: 1150px) { .screens { grid-template-columns: repeat(2, minmax(250px, 1fr)); } }
+  .screen { padding: 14px; border-radius: 22px; background: var(--card); }
+  .screen h3 { margin: 0 0 10px; font-size: 15px; }
+  .frame { --s: 0.64; width: calc(390px * var(--s)); height: calc(760px * var(--s)); margin: 0 auto; overflow: hidden; border-radius: calc(44px * var(--s)); box-shadow: 0 0 0 7px #111, 0 10px 30px rgba(0,0,0,.18); }
+  .phone { width: 390px; height: 760px; transform: scale(var(--s)); transform-origin: 0 0; position: relative; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 7px 6px; border-top: .5px solid var(--sep); text-align: left; vertical-align: top; line-height: 1.5; }
+  th { color: var(--label-2); font-size: 12px; }
+  .id { display: inline-block; min-width: 2.4em; padding: 1px 6px; border-radius: 6px; background: var(--tag); color: #000; text-align: center; font: 700 11.5px/1.4 ui-monospace, Menlo, Consolas, monospace; }
+  .card-table { padding: 6px 16px 10px; border-radius: 18px; background: var(--card); }
+  .muted { color: var(--label-2); font-size: 12px; }
+
+  /* 番号札（?labels のかわりにチェックボックスで出し入れ） */
+  .show-labels [data-part] { position: relative; }
+  .show-labels [data-part]::before { content: attr(data-part); position: absolute; top: -6px; left: 2px; z-index: 50; padding: 1px 5px; border-radius: 6px;
+    background: var(--tag); color: #000; font: 700 12px/1.3 ui-monospace, Menlo, Consolas, monospace; box-shadow: 0 1px 3px rgba(0,0,0,.35); pointer-events: none; }
+
+  /* ---- 共通の部品 ---- */
+  .phone { --c: #38bdf8; --c-soft: color-mix(in srgb, var(--c) 16%, white); --ink: #0f172a; --ink-2: #64748b; color: var(--ink); font-size: 15px; line-height: 1.6; }
+  .status { height: 44px; display: flex; justify-content: space-between; align-items: center; padding: 0 26px; font: 600 14px/1 system-ui; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; padding: 7px 12px; border-radius: 999px; font-size: 13px; white-space: nowrap; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: #fff; flex: none; }
+  .live-card { border-radius: 16px; padding: 10px 12px; font-size: 13px; line-height: 1.5; }
+  .live-card .d { font-weight: 700; }
+  .src { display: inline-flex; gap: 4px; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 11.5px; }
+  .disclaimer { font-size: 11px; color: var(--ink-2); text-align: center; }
+  .dots { display: inline-flex; gap: 4px; } .dots i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .5; }
+
+  /* ---- A: アシスタント型 ---- */
+  .va { background: #fff; }
+  .va .top { height: 52px; display: flex; align-items: center; gap: 10px; padding: 0 14px; }
+  .va .menu { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 20px; }
+  .va .picker { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: #f1f5f9; font-weight: 700; }
+  .va .picker .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+  .va .body { position: absolute; inset: 96px 0 118px; padding: 0 18px; overflow: hidden; }
+  .va .hello { margin-top: 150px; text-align: center; }
+  .va .hello .big { font-size: 26px; font-weight: 800; letter-spacing: .02em; }
+  .va .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 18px; }
+  .va .chips .chip { background: #f1f5f9; }
+  .va .me { margin: 14px 0 14px auto; max-width: 78%; padding: 9px 14px; border-radius: 20px; background: #f1f5f9; width: fit-content; }
+  .va .ai { display: flex; gap: 10px; }
+  .va .ai .text { flex: 1; }
+  .va .actions { display: flex; gap: 14px; color: var(--ink-2); font-size: 15px; margin: 6px 0; }
+  .va .composer { position: absolute; left: 12px; right: 12px; bottom: 40px; }
+  .va .pill { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 16px; border-radius: 28px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,.06); color: var(--ink-2); }
+  .va .pill .send { margin-left: auto; width: 36px; height: 36px; border-radius: 50%; background: var(--c); color: #fff; display: grid; place-items: center; font-weight: 800; }
+  .va .composer .disclaimer { margin-top: 6px; }
+  .va .sheet { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 34px; border-radius: 24px 24px 0 0; background: #fff; box-shadow: 0 -8px 30px rgba(0,0,0,.18); }
+  .va .row { display: flex; align-items: center; gap: 12px; padding: 10px 6px; border-radius: 14px; }
+  .va .scrim { position: absolute; inset: 0; background: rgba(15,23,42,.35); }
+
+  /* ---- B: ライブ型 ---- */
+  .vb { background: radial-gradient(120% 80% at 50% 30%, color-mix(in srgb, var(--c) 22%, #0b1020) 0%, #060812 70%); color: #f8fafc; --ink-2: #94a3b8; }
+  .vb .glow { position: absolute; inset: 0; border-radius: 44px; box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--c) 80%, white), inset 0 0 38px 8px color-mix(in srgb, var(--c) 55%, transparent); pointer-events: none; }
+  .vb .top { display: flex; justify-content: space-between; align-items: center; padding: 6px 18px; font-size: 14px; color: #cbd5e1; }
+  .vb .orb-wrap { display: grid; place-items: center; margin-top: 26px; }
+  .vb .orb { width: 148px; height: 148px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0%, color-mix(in srgb, var(--c) 70%, white) 22%, var(--c) 55%, color-mix(in srgb, var(--c) 40%, #000) 100%);
+             box-shadow: 0 0 60px 12px color-mix(in srgb, var(--c) 55%, transparent); }
+  .vb .orb.small { width: 92px; height: 92px; }
+  .vb .name { text-align: center; margin-top: 14px; font-size: 20px; font-weight: 800; }
+  .vb .sub { text-align: center; color: #94a3b8; font-size: 13px; }
+  .vb .caption { margin: 22px 22px 0; padding: 14px 16px; border-radius: 20px; background: rgba(255,255,255,.08); backdrop-filter: blur(10px); font-size: 16px; line-height: 1.7; }
+  .vb .me-line { margin: 12px 26px 0; text-align: right; color: #cbd5e1; font-size: 13px; }
+  .vb .chips { display: flex; gap: 8px; overflow: hidden; padding: 12px 22px 0; }
+  .vb .chips .chip { background: rgba(255,255,255,.10); color: #e2e8f0; }
+  .vb .src { background: rgba(255,255,255,.12); color: #e2e8f0; }
+  .vb .composer { position: absolute; left: 16px; right: 16px; bottom: 40px; }
+  .vb .pill { display: flex; align-items: center; gap: 8px; padding: 10px 10px 10px 18px; border-radius: 28px; background: rgba(255,255,255,.10); color: #94a3b8; }
+  .vb .pill .send { margin-left: auto; width: 38px; height: 38px; border-radius: 50%; background: var(--c); color: #0b1020; display: grid; place-items: center; font-weight: 800; }
+  .vb .live-card { background: rgba(255,255,255,.08); margin: 14px 22px 0; }
+  .vb .rail { display: flex; gap: 18px; justify-content: center; align-items: flex-end; margin-top: 30px; }
+  .vb .rail .m { text-align: center; font-size: 12px; color: #cbd5e1; }
+  .vb .rail .o { width: 54px; height: 54px; border-radius: 50%; margin: 0 auto 6px; box-shadow: 0 0 22px 2px color-mix(in srgb, var(--oc) 60%, transparent); background: radial-gradient(circle at 35% 30%, #fff, var(--oc) 60%); }
+  .vb .rail .m.on .o { width: 78px; height: 78px; }
+
+  /* ---- C: メッセンジャー型 ---- */
+  .vc { background: #f6f7fb; }
+  .vc .top { height: 56px; display: flex; align-items: center; gap: 10px; padding: 0 12px; background: #fff; border-bottom: 1px solid #e5e7eb; }
+  .vc .back { font-size: 22px; color: var(--ink-2); width: 22px; }
+  .vc .title { font-weight: 800; } .vc .title small { display: block; font-weight: 500; color: var(--ink-2); font-size: 11px; }
+  .vc .notice { margin: 10px 14px; padding: 8px 12px; border-radius: 12px; background: #fff7ed; color: #9a3412; font-size: 12px; line-height: 1.5; }
+  .vc .msgs { padding: 0 12px; }
+  .vc .ai { display: flex; gap: 8px; margin: 10px 0; }
+  .vc .bubble { max-width: 76%; padding: 9px 13px; border-radius: 4px 18px 18px 18px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+  .vc .me { margin: 10px 0 10px auto; width: fit-content; max-width: 76%; padding: 9px 13px; border-radius: 18px 4px 18px 18px; background: var(--c); color: #fff; }
+  .vc .src { background: #eef2ff; color: #3730a3; margin-top: 6px; }
+  .vc .chips { display: flex; gap: 8px; padding: 6px 12px; overflow: hidden; }
+  .vc .chips .chip { background: #fff; border: 1px solid color-mix(in srgb, var(--c) 50%, #e5e7eb); }
+  .vc .composer { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 10px 34px; background: #fff; border-top: 1px solid #e5e7eb; display: flex; gap: 8px; align-items: center; }
+  .vc .field { flex: 1; padding: 9px 14px; border-radius: 20px; background: #f1f5f9; color: var(--ink-2); }
+  .vc .send { width: 38px; height: 38px; border-radius: 50%; background: var(--c); color: #fff; display: grid; place-items: center; font-weight: 800; }
+  .vc .list .item { display: flex; gap: 12px; align-items: center; padding: 12px 14px; background: #fff; border-bottom: 1px solid #f1f5f9; }
+  .vc .list .item .avatar { width: 48px; height: 48px; font-size: 18px; }
+  .vc .list .item .t { flex: 1; min-width: 0; } .vc .list .item .t b { display: block; } .vc .list .item .t span { color: var(--ink-2); font-size: 13px; }
+  .vc .badge { min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--oc); color: #fff; font-size: 12px; text-align: center; }
+  .vc .live-card { background: #fff; border-left: 4px solid var(--c); margin: 8px 0 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>AIろりぽっぷ 画面ラフ（3 案）</h1>
+  <p class="lead">
+    ChatGPT・Claude・Gemini・Siri・Grok などの「型」を参考にした静的なラフです（見た目の方向を選ぶためのもので、文言や色は仮）。
+    オレンジの番号札は案をまたいで同じ意味の部品に同じ番号を振っています。<br>
+    「A 案で」「B の O1 を A に入れて」「C の H1 を小さく」のように指示してください。
+  </p>
+
+  <div class="bar">
+    <nav class="tabs" role="tablist" id="tabs"></nav>
+    <label><input type="checkbox" id="labels" checked> 番号札</label>
+    <label>メンバー
+      <select id="member">
+        <option value="#38bdf8|まう|🩵">まう（水色）</option>
+        <option value="#ef4444|くるみ|❤️">くるみ（赤）</option>
+        <option value="#facc15|おまゆ|💛">おまゆ（黄）</option>
+        <option value="#22c55e|あみ|💚">あみ（緑）</option>
+        <option value="#cbd5e1|まなてぃー|🤍">まなてぃー（白）</option>
+      </select>
+    </label>
+  </div>
+
+  <div id="variant-lead" class="variant-lead"></div>
+  <div class="screens" id="screens"></div>
+
+  <h2>部品表</h2>
+  <div class="card-table"><table id="parts"></table></div>
+
+  <h2>決めてほしいこと</h2>
+  <div class="box">
+    <ol>
+      <li><b>どの案で進めるか</b>（1 案選ぶ／混ぜる。例:「A の土台に B の O1（光るオーブ）を空状態だけ入れる」）</li>
+      <li><b>最初に開いたときの画面</b>: いきなり前回のメンバーと話す（A・B）／まずメンバー一覧（C）</li>
+      <li><b>名前の入力</b>: 最初に聞く／設定から任意（ラフは任意にしています。未設定なら AI は名前を呼ばない）</li>
+      <li><b>会話履歴</b>: メンバーごとに 1 本だけ（C）／メンバーごとに複数スレッド（A のメニュー）</li>
+      <li><b>ダークモード</b>: B は常に暗い画面。A・C は端末の設定に合わせる予定</li>
+    </ol>
+    <p class="muted">初版に入れないもの: 声での入力（マイク）、回数制限のサーバー側管理、全員で話す楽屋トーク。ラフのマイクは描いていません。</p>
+  </div>
+
+  <h2>採った型と参考元</h2>
+  <div class="card-table"><table id="refs"></table></div>
+</main>
+
+<script>
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  const VARIANTS = [
+    { id: 'a', name: 'A アシスタント型', lead: '<b>A アシスタント型</b>（ChatGPT・Claude の型）— 白い画面に大きな挨拶と提案チップ。上の「まう ▾」でメンバーを切り替え、左上のメニューに会話履歴。いちばん見慣れた形で、情報（出典・公演カード）を落ち着いて見せやすい。' },
+    { id: 'b', name: 'B ライブ型', lead: '<b>B ライブ型</b>（Siri・Gemini Live の型）— 暗い画面の中央にメンバーカラーの光るオーブ。返答中はオーブが脈打ち、画面の縁が担当カラーで光る。字幕のように返答を大きく出す。「推しと話している」没入感が強い一方、長い資料や履歴は見せにくい。' },
+    { id: 'c', name: 'C メッセンジャー型', lead: '<b>C メッセンジャー型</b>（LINE・Character.AI・Grok のキャラ会話の型）— まずメンバーのトーク一覧、選ぶと 1 対 1 のトーク。メンバーから先に話しかけてくる。担当カラーの吹き出し。スマホで一番なじみがあり、5 人を並べる見せ方に合う。' },
+  ];
+
+  const say = {
+    hello: (n) => `{name}おあまう〜☀️`,
+    reply: '昨日のライブ行ってくれてありがとうだよ〜！🎶<br>9/6 の生誕祭は「シーソーゲーム」「主人公!!!!!!!」もやったみたい！どの曲がいちばん好きだった〜？',
+  };
+
+  function status(dark) { return `<div class="status" style="color:${dark ? '#fff' : '#000'}"><span>9:41</span><span>●●● ▮</span></div>`; }
+
+  const liveCard = (cls = '') => `<div class="live-card ${cls}" data-part="L1"><span class="d">次のライブ</span> 9/20(日) PLUMLIVE #126<br><span style="opacity:.7">新宿Zirco ・ 詳しくは公式X ↗</span></div>`;
+
+  const A = {
+    empty: (m) => `<div class="phone va" style="--c:${m.c}">${status()}
+      <div class="top" data-part="H1"><div class="menu" data-part="H2">≡</div><div class="picker" data-part="M1"><span class="dot"></span>AI${m.n} ▾</div></div>
+      <div class="body"><div class="hello" data-part="E1"><div class="big">やほす〜！<br>なに話す？</div><div style="color:#64748b;margin-top:6px">AI${m.n}だよ${m.e}</div></div>
+        <div class="chips" data-part="E2"><span class="chip">次のライブいつ？</span><span class="chip">前回のセトリ</span><span class="chip">おすすめの曲</span><span class="chip">今日つかれた…</span></div>
+        <div style="margin-top:26px">${liveCard('').replace('class="live-card ', 'class="live-card " style="background:var(--c-soft)" ')}</div></div>
+      <div class="composer"><div class="pill" data-part="I1">AI${m.n}にメッセージ<div class="send" data-part="I2">↑</div></div><div class="disclaimer" data-part="D1">非公式のファン制作。AI の発言でメンバー本人ではありません</div></div></div>`,
+    chat: (m) => `<div class="phone va" style="--c:${m.c}">${status()}
+      <div class="top"><div class="menu">≡</div><div class="picker"><span class="dot"></span>AI${m.n} ▾</div></div>
+      <div class="body"><div class="me" data-part="B1">昨日のライブ行ってきた！</div>
+        <div class="ai"><div class="avatar" style="background:var(--c)">${m.e}</div><div class="text" data-part="R1">ゆう！${say.reply}</div></div>
+        <div style="margin-left:44px"><div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0" data-part="R2"><span class="src" style="background:#f1f5f9">📄 公演データ</span><span class="src" style="background:#f1f5f9">📄 セトリ白書 ↗</span></div>
+          <div class="actions" data-part="R3">⧉　↻　♡</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" data-part="K1"><span class="chip" style="background:#f1f5f9">シーソーゲーム！</span><span class="chip" style="background:#f1f5f9">主人公が好き</span></div></div></div>
+      <div class="composer"><div class="pill">AI${m.n}にメッセージ<div class="send">■</div></div><div class="disclaimer">非公式のファン制作。AI の発言でメンバー本人ではありません</div></div></div>`,
+    switch: (m) => `<div class="phone va" style="--c:${m.c}">${status()}
+      <div class="top"><div class="menu">≡</div><div class="picker"><span class="dot"></span>AI${m.n} ▾</div></div>
+      <div class="body"><div class="hello"><div class="big">やほす〜！</div></div></div>
+      <div class="scrim"></div>
+      <div class="sheet" data-part="M2"><div style="font-weight:800;margin:2px 6px 8px">だれと話す？</div>
+        ${MEMBERS.map((x) => `<div class="row" style="${x.n === m.n ? 'background:#f1f5f9' : ''}"><div class="avatar" style="background:${x.c}">${x.e}</div><div><b>AI${x.n}</b><div style="font-size:12px;color:#64748b">${x.full}・${x.cn}</div></div>${x.n === m.n ? '<span style="margin-left:auto">✓</span>' : ''}</div>`).join('')}</div></div>`,
+    limit: (m) => `<div class="phone va" style="--c:${m.c}">${status()}
+      <div class="top"><div class="menu">≡</div><div class="picker"><span class="dot"></span>AI${m.n} ▾</div></div>
+      <div class="body"><div class="me">ねえねえ</div>
+        <div class="ai"><div class="avatar" style="background:var(--c)">${m.e}</div><div class="text">ゆう〜ごめんね、今日はおしゃべりの回数がいっぱいになっちゃった🥲</div></div>
+        <div data-part="Q1" style="margin:16px 0 0 44px;padding:12px 14px;border-radius:14px;background:#fef3c7;font-size:13px;line-height:1.6">今日の受付は終了しました<br><b>17:00 ごろ</b>にまた話せます（みんなで使える回数に上限があります）</div></div>
+      <div class="composer"><div class="pill" style="opacity:.5">17:00 から話せます<div class="send" style="background:#cbd5e1">↑</div></div><div class="disclaimer">非公式のファン制作。AI の発言でメンバー本人ではありません</div></div></div>`,
+  };
+
+  const B = {
+    empty: (m) => `<div class="phone vb" style="--c:${m.c}"><div class="glow" data-part="O2"></div>${status(true)}
+      <div class="top"><span data-part="H2">≡ 履歴</span><span data-part="D1" style="font-size:11px">非公式・AI です</span></div>
+      <div class="orb-wrap" data-part="O1"><div class="orb"></div></div>
+      <div class="name" data-part="H1">AI${m.n} ${m.e}</div><div class="sub">なんでも話しかけてね</div>
+      <div class="caption" data-part="E1">やほす〜！今日はなにしてた？</div>
+      <div class="chips" data-part="E2"><span class="chip">次のライブ</span><span class="chip">前回のセトリ</span><span class="chip">つかれた〜</span></div>
+      ${liveCard()}
+      <div class="composer"><div class="pill" data-part="I1">メッセージ<div class="send" data-part="I2">↑</div></div></div></div>`,
+    chat: (m) => `<div class="phone vb" style="--c:${m.c}"><div class="glow"></div>${status(true)}
+      <div class="top"><span>≡ 履歴</span><span style="font-size:11px">非公式・AI です</span></div>
+      <div class="orb-wrap"><div class="orb small"></div></div>
+      <div class="me-line" data-part="B1">昨日のライブ行ってきた！</div>
+      <div class="caption" data-part="R1">ゆう！${say.reply}<div style="margin-top:6px"><span class="dots" data-part="O3"><i></i><i></i><i></i></span></div></div>
+      <div style="display:flex;gap:6px;padding:10px 22px 0" data-part="R2"><span class="src">📄 公演データ</span><span class="src">📄 セトリ白書 ↗</span></div>
+      <div class="chips" data-part="K1"><span class="chip">シーソーゲーム！</span><span class="chip">主人公が好き</span></div>
+      <div class="composer"><div class="pill">メッセージ<div class="send">■</div></div></div></div>`,
+    switch: (m) => `<div class="phone vb" style="--c:${m.c}"><div class="glow"></div>${status(true)}
+      <div class="top"><span>≡ 履歴</span><span style="font-size:11px">非公式・AI です</span></div>
+      <div style="text-align:center;margin-top:40px;font-weight:800;font-size:18px">だれと話す？</div>
+      <div class="rail" data-part="M2">${MEMBERS.map((x) => `<div class="m ${x.n === m.n ? 'on' : ''}" style="--oc:${x.c}"><div class="o"></div>${x.n}</div>`).join('')}</div>
+      <div class="sub" style="margin-top:26px">左右にスワイプ ／ タップで決定</div>
+      <div class="caption" style="margin-top:30px;text-align:center">AI${m.n}${m.e}<br><span style="font-size:13px;color:#94a3b8">${MEMBERS.find((x) => x.n === m.n).full}・${MEMBERS.find((x) => x.n === m.n).cn}担当</span></div></div>`,
+    limit: (m) => `<div class="phone vb" style="--c:#64748b">${status(true)}
+      <div class="top"><span>≡ 履歴</span><span style="font-size:11px">非公式・AI です</span></div>
+      <div class="orb-wrap" style="margin-top:60px"><div class="orb" style="filter:grayscale(.8);opacity:.6"></div></div>
+      <div class="name">おやすみ中…💤</div>
+      <div class="caption" data-part="Q1" style="text-align:center">今日のおしゃべりはここまで！<br><b>17:00 ごろ</b>にまた話そうね</div>
+      <div class="composer"><div class="pill" style="opacity:.5">17:00 から話せます</div></div></div>`,
+  };
+
+  const C = {
+    empty: (m) => `<div class="phone vc" style="--c:${m.c}">${status()}
+      <div class="top" data-part="H1"><div class="back" data-part="H2">‹</div><div class="avatar" style="background:var(--c)">${m.e}</div><div class="title">AI${m.n}<small>非公式・AI のトーク</small></div></div>
+      <div class="notice" data-part="D1">これはファンが作った非公式の AI です。メンバー本人の発言ではありません。</div>
+      <div class="msgs"><div class="ai" data-part="E1"><div class="avatar" style="background:var(--c)">${m.e}</div><div class="bubble">おあまう〜☀️<br>今日もきてくれてうれしい！なに話す〜？</div></div>
+        <div style="margin-left:42px">${liveCard()}</div></div>
+      <div class="chips" data-part="E2" style="position:absolute;bottom:92px;left:0;right:0"><span class="chip">次のライブ</span><span class="chip">前回のセトリ</span><span class="chip">つかれた〜</span></div>
+      <div class="composer"><div class="field" data-part="I1">メッセージ</div><div class="send" data-part="I2">↑</div></div></div>`,
+    chat: (m) => `<div class="phone vc" style="--c:${m.c}">${status()}
+      <div class="top"><div class="back">‹</div><div class="avatar" style="background:var(--c)">${m.e}</div><div class="title">AI${m.n}<small>非公式・AI のトーク</small></div></div>
+      <div class="msgs" style="padding-top:8px"><div class="me" data-part="B1">昨日のライブ行ってきた！</div>
+        <div class="ai"><div class="avatar" style="background:var(--c)">${m.e}</div><div><div class="bubble" data-part="R1">ゆう！${say.reply}</div>
+          <div data-part="R2"><span class="src">📄 公演データ</span> <span class="src">📄 セトリ白書 ↗</span></div></div></div></div>
+      <div class="chips" data-part="K1" style="position:absolute;bottom:92px;left:0;right:0"><span class="chip">シーソーゲーム！</span><span class="chip">主人公が好き</span></div>
+      <div class="composer"><div class="field">メッセージ</div><div class="send">■</div></div></div>`,
+    switch: (m) => `<div class="phone vc" style="--c:${m.c}">${status()}
+      <div class="top"><div class="title" style="font-size:18px">トーク</div><span style="margin-left:auto;font-size:11px;color:#64748b" data-part="D1">非公式・AI</span></div>
+      <div class="list" data-part="M2">${MEMBERS.map((x, i) => `<div class="item"><div class="avatar" style="background:${x.c}">${x.e}</div><div class="t"><b>AI${x.n}</b><span>${['おあまう〜☀️ なに話す〜？', 'おはよー( ¯꒳¯ )ᐝ', 'おはぎょ🥟🌞🌱', 'おはよーー👶🏻', 'おはてぃー🤍'][i]}</span></div>${i < 2 ? `<span class="badge" style="--oc:${x.c}">1</span>` : ''}</div>`).join('')}</div>
+      <div style="margin:14px">${liveCard()}</div></div>`,
+    limit: (m) => `<div class="phone vc" style="--c:${m.c}">${status()}
+      <div class="top"><div class="back">‹</div><div class="avatar" style="background:var(--c)">${m.e}</div><div class="title">AI${m.n}<small>非公式・AI のトーク</small></div></div>
+      <div class="msgs" style="padding-top:8px"><div class="me">ねえねえ</div>
+        <div class="ai"><div class="avatar" style="background:var(--c)">${m.e}</div><div class="bubble">ごめんね、今日はおしゃべりの回数がいっぱいになっちゃった🥲</div></div>
+        <div data-part="Q1" style="margin:14px auto;width:fit-content;padding:6px 14px;border-radius:999px;background:#e2e8f0;font-size:12px">今日の受付は終了 ・ 17:00 ごろ再開</div></div>
+      <div class="composer"><div class="field" style="opacity:.5">17:00 から話せます</div><div class="send" style="background:#cbd5e1">↑</div></div></div>`,
+  };
+
+  const MEMBERS = [
+    { n: 'まう', full: 'まう', cn: '水色', c: '#38bdf8', e: '🩵' },
+    { n: 'くるみ', full: 'やぎくるみ', cn: '赤', c: '#ef4444', e: '❤️' },
+    { n: 'おまゆ', full: '夏川茉夢', cn: '黄色', c: '#facc15', e: '💛' },
+    { n: 'あみ', full: '松川愛美', cn: '緑', c: '#22c55e', e: '💚' },
+    { n: 'まなてぃー', full: '愛月まな', cn: '白', c: '#cbd5e1', e: '🤍' },
+  ];
+
+  const SCREENS = [['empty', '① 最初の画面'], ['chat', '② 会話中'], ['switch', '③ メンバー切り替え'], ['limit', '④ 今日はおしまい']];
+  const BUILD = { a: A, b: B, c: C };
+
+  const PARTS = [
+    ['H1', 'ヘッダー（いま話しているメンバー）', 'A: 上部のメンバー名 ／ B: オーブ下の名前 ／ C: トークの見出し'],
+    ['H2', '履歴・戻る', 'A: 左上メニュー（会話の一覧）／ B: 左上「履歴」／ C: 一覧へ戻る'],
+    ['M1', 'メンバー切り替えの入口', 'A: 「AIまう ▾」'],
+    ['M2', 'メンバー選択', 'A: 下から出るシート ／ B: 光るオーブを左右に並べる ／ C: トーク一覧'],
+    ['E1', '最初の挨拶', 'A: 大きな見出し ／ B: 字幕 ／ C: メンバーから先に話しかける吹き出し'],
+    ['E2', '話しかけ方の提案チップ', ''],
+    ['L1', '今後の公演カード', 'data_event.csv の今日以降。日付・イベント名・会場と公式 X へのリンク'],
+    ['B1', '自分のメッセージ', ''],
+    ['R1', 'AI の返答（1 文字ずつ表示）', ''],
+    ['R2', '出典チップ', '記事タイトル → note。公演データは「公演データ」'],
+    ['R3', '返答の操作', 'A のみ: コピー（押すと ✓ に変わる）・もう一度・いいね'],
+    ['K1', '返信候補', 'AI が出す「次に言いそうなこと」3 つ'],
+    ['I1', '入力欄', ''],
+    ['I2', '送信ボタン', '返答中は ■（止める）に変わる'],
+    ['D1', '非公式・AI の表示', 'A: 入力欄の下に常時 ／ B: 右上に小さく ／ C: トークの最初に帯'],
+    ['Q1', '今日はおしまい', 'Gemini の無料枠が尽きたとき。再開時刻（日本時間 16〜17 時）を出す'],
+    ['O1', '光るオーブ', 'B のみ。返答中は脈打つ'],
+    ['O2', '画面の縁の光', 'B のみ。担当カラーで光る'],
+    ['O3', '考え中の点', 'B の例。A・C にも入る（3 つの点が波打つ）'],
+  ];
+
+  const REFS = [
+    ['A', '中央の挨拶＋直下の提案チップ', 'ChatGPT・Gemini', 'E1・E2'],
+    ['A', '丸い入力欄、送信中は停止ボタンに変わる', 'ChatGPT・Claude', 'I1・I2'],
+    ['A', '返答の下の操作は、押したアイコン自体が変わる', 'Grok・ChatGPT', 'R3'],
+    ['A', '入力欄の下に常に控えめな注意書き', 'ChatGPT・Gemini', 'D1'],
+    ['A/B', '出典は本文に埋め込まず、チップから開く', 'Gemini', 'R2'],
+    ['B', '担当色で光る縁、小さな核から広がる', 'Siri（Apple Intelligence）', 'O1・O2'],
+    ['B', '通常の会話の中にライブ感を収める', 'Gemini Live・ChatGPT 音声', 'R1'],
+    ['全案', '考え中は 3 つの点が波打つ', 'Gemini', 'O3'],
+    ['C', 'キャラから先に話しかけてくる', 'Character.AI', 'E1'],
+    ['C', 'モデルではなくキャラ（人）を選ぶことが入口', 'Character.AI・Grok のペルソナ', 'M2'],
+    ['C', '会話の冒頭に「AI で本人ではない」を明示', 'Character.AI', 'D1'],
+  ];
+
+  let current = VARIANTS[0];
+  function member() { const [c, n, e] = document.getElementById('member').value.split('|'); return { c, n, e }; }
+
+  function render() {
+    const m = member();
+    document.getElementById('variant-lead').innerHTML = current.lead;
+    document.getElementById('screens').innerHTML = SCREENS.map(([key, title]) =>
+      `<article class="screen"><h3>${title}</h3><div class="frame">${BUILD[current.id][key](m).replaceAll('{name}', 'ゆう')}</div></article>`).join('');
+    document.querySelectorAll('#tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.id === current.id)));
+    document.body.classList.toggle('show-labels', document.getElementById('labels').checked);
+    history.replaceState(null, '', `#${current.id}`);
+  }
+
+  document.getElementById('tabs').innerHTML = VARIANTS.map((v) => `<button role="tab" data-id="${v.id}">${esc(v.name)}</button>`).join('');
+  document.getElementById('tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-id]'); if (b) { current = VARIANTS.find((v) => v.id === b.dataset.id); render(); } });
+  document.getElementById('labels').addEventListener('change', render);
+  document.getElementById('member').addEventListener('change', render);
+  document.getElementById('parts').innerHTML = `<tr><th>番号</th><th>部品</th><th>案ごとの違い</th></tr>` + PARTS.map(([id, name, note]) => `<tr><td><span class="id">${id}</span></td><td>${esc(name)}</td><td class="muted">${esc(note)}</td></tr>`).join('');
+  document.getElementById('refs').innerHTML = `<tr><th>案</th><th>採った型</th><th>参考元</th><th>部品</th></tr>` + REFS.map((r) => `<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td class="muted">${esc(r[2])}</td><td>${r[3]}</td></tr>`).join('');
+  current = VARIANTS.find((v) => `#${v.id}` === location.hash) ?? VARIANTS[0];
+  render();
+</script>
+</body>
+</html>

@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AIろりぽっぷ（非公式ファン制作）
 
-## Getting Started
+アイドルグループ「ろりぽっぷ!!!!!!!」のメンバー 5 人をモデルにした、ファンが作っている非公式の AI チャットです。
+AI の発言はメンバー本人の発言ではありません。
 
-First, run the development server:
+- 公開先: https://lollpop-ai.lolipop-now.app （ロリポップ！デプロイナウ）
+- 前身: [ai-mau-bot](https://github.com/kawada612-bit/ai-mau-bot)（AIまう）
+
+## しくみ
+
+| 部分 | 中身 |
+|---|---|
+| 画面・API | Next.js（App Router）。`app/api/chat/route.ts` が Gemini の返答を 1 行 1 JSON でストリーミングする |
+| AI | Gemini の Flash-Lite 系を順に試す（`lib/config.ts`）。全モデルが枠切れなら「今日はおしまい」 |
+| なりきり | `persona/_common.md`（全員共通）＋ `persona/<メンバー>.md`（X 投稿の実数から作成） |
+| 知識 | [lollpop_docs](https://github.com/devhitoshi/lollpop_docs) の記事・メンバー資料・セトリを `scripts/build_data.py` で断片にし、質問ごとに検索して最大 4,000 字を渡す（`lib/search.ts`） |
+| ライブ情報 | lollpop_docs の `events/data_event.csv`。今日以降の行を「今後の公演」として扱う |
+| データ更新 | `.github/workflows/sync-data.yml` が毎日 lollpop_docs を読み直して `data/` を push |
+
+## 開発
 
 ```bash
+npm install
+npm run data -- --docs ../lollpop_docs   # data/*.json を作る（lollpop_docs の main を展開したディレクトリ）
+npm test                                  # 検索・プロンプト・返信候補の単体テスト
+npm run chat -- --size                    # プロンプトの文字数（API キー不要）
+npm run chat -- --member mau "やほす〜"   # 端末から会話を試す（.env.local に GEMINI_API_KEY）
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+本番の API キーは `lolipop env` で設定する（デプロイナウは `.env` を読まない）。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 設計
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 画面ラフと部品番号: `design/design.html`
+- 要件: `docs/requirements.md`
