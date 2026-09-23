@@ -16,7 +16,7 @@
   "作詞": "宇田川翔",
   "作曲": "宇田川翔",
   "初披露": "2025年1月12日「Killer Tune AKABANE 2025 SP LIVE」（赤羽ReNYα）※公式投稿に「←新曲✨」の記載あり",
-  "plays": 171,
+  "plays": 172,
   "aliases": [
    "ぽっぽ♪ポジティブ！！",
    "ぽっぽポジティブ"
@@ -28,7 +28,7 @@
   "作詞": "八田雅彦",
   "作曲": "SYOTA",
   "初披露": "2025年3月30日 1stワンマンライブ「始まりの宴!!!!!!」（代官山UNIT）",
-  "plays": 149,
+  "plays": 151,
   "aliases": [
    "始まりの宴",
    "始まりの宴!!!!!!!"
@@ -39,7 +39,7 @@
   "category": "オリジナル曲（ろりぽっぷ!!!!!!!名義）",
   "作詞": "宇田川翔",
   "作曲": "宇田川翔",
-  "plays": 40,
+  "plays": 41,
   "aliases": [
    "約束",
    "約束!!!!!!!"
@@ -71,7 +71,7 @@
   "category": "オリジナル曲（ろりぽっぷ!!!!!!!名義）",
   "作詞": "宇田川翔",
   "作曲": "中山範一",
-  "plays": 54,
+  "plays": 55,
   "aliases": [
    "Unknown",
    "unknown"
@@ -83,7 +83,7 @@
   "作詞": "南 祇園",
   "作曲": "SYOTA",
   "初披露": "2026年3月25日「単独ライブVol.13」（中野坂上SUB TOKYO）",
-  "plays": 41,
+  "plays": 44,
   "aliases": [
    "未完成ヒロイン"
   ]
@@ -105,7 +105,7 @@
   "作詞": "八田雅彦",
   "作曲": "SYOTA",
   "初披露": "2026年6月6日 3rdワンマンライブ「全力疾走」（新宿ReNY）",
-  "plays": 10,
+  "plays": 11,
   "aliases": [
    "メイク☆マイダンス",
    "メイクマイダンス"
@@ -117,16 +117,26 @@
   "作詞": "八田雅彦",
   "作曲": "SYOTA",
   "初披露": "2026年8月26日「単独ライブ Vol.18 夏曲お披露目公演」2部（中野坂上SUB TOKYO）",
-  "plays": 9,
+  "plays": 11,
   "aliases": [
    "夏色ラムネ"
+  ]
+ },
+ {
+  "name": "また会う日まで",
+  "category": "オリジナル曲（ろりぽっぷ!!!!!!!名義）",
+  "作詞・作曲": "未確認",
+  "初披露": "2026年9月20日「ろりぽっぷ!!!!!!!単独ライブvol.19」〜なのマネージャーおたんじょうび編〜（池袋W:IKE329）",
+  "plays": 2,
+  "aliases": [
+   "また会う日まで"
   ]
  },
  {
   "name": "END THE WORLD",
   "category": "ストクレ曲（元STRAY SHEEP CLAYMORE）",
   "作詞・作曲": "ハシバタカナリ",
-  "plays": 45,
+  "plays": 46,
   "aliases": [
    "END THE WORLD",
    "endtheworld"
@@ -136,7 +146,7 @@
   "name": "HELLO",
   "category": "ストクレ曲（元STRAY SHEEP CLAYMORE）",
   "作詞・作曲": "ハシバタカナリ",
-  "plays": 106,
+  "plays": 108,
   "aliases": [
    "HELLO",
    "hello"
@@ -146,7 +156,7 @@
   "name": "SHINY DAYS",
   "category": "ストクレ曲（元STRAY SHEEP CLAYMORE）",
   "作詞・作曲": "ハシバタカナリ",
-  "plays": 124,
+  "plays": 126,
   "aliases": [
    "SHINY DAYS",
    "shinydays"
@@ -166,7 +176,7 @@
   "name": "Singularity",
   "category": "ストクレ曲（元STRAY SHEEP CLAYMORE）",
   "作詞・作曲": "ハシバタカナリ",
-  "plays": 14,
+  "plays": 15,
   "aliases": [
    "Singularity",
    "singularity"
@@ -176,7 +186,7 @@
   "name": "MADOROMI",
   "category": "ストクレ曲（元STRAY SHEEP CLAYMORE）",
   "作詞・作曲": "ハシバタカナリ",
-  "plays": 31,
+  "plays": 32,
   "aliases": [
    "MADOROMI",
    "madoromi"
@@ -198,7 +208,7 @@
   "category": "ストクレ曲（元STRAY SHEEP CLAYMORE）",
   "作詞": "青木とーい",
   "作曲": "SYOTA",
-  "plays": 94,
+  "plays": 95,
   "aliases": [
    "キミノセイ、"
   ]
@@ -228,7 +238,7 @@
   "category": "ハピスト曲（元ハピ☆スト-HAPPY END STORY-）",
   "作詞": "南祇園",
   "作曲": "Syota",
-  "plays": 106,
+  "plays": 108,
   "aliases": [
    "推し事～女の子アイドルオタクあるある",
    "推し事～女の子アイドルオタクあるある〜"
@@ -239,7 +249,7 @@
   "category": "ハピスト曲（元ハピ☆スト-HAPPY END STORY-）",
   "作詞": "小鳥遊彩花",
   "作曲": "Syota",
-  "plays": 28,
+  "plays": 29,
   "aliases": [
    "サクラロード"
   ]
@@ -258,7 +268,7 @@
   "name": "アタックサイン",
   "category": "ハピスト曲（元ハピ☆スト-HAPPY END STORY-）",
   "作詞・作曲": "未確認",
-  "plays": 89,
+  "plays": 90,
   "aliases": [
    "アタックサイン"
   ]
