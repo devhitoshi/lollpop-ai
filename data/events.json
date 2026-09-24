@@ -4093,13 +4093,26 @@
   "date": "2026-09-23",
   "event": "MOVE ON MUSIC! Vol.10",
   "venue": "SHIBUYA CYCLONE",
-  "songs": []
+  "songs": [
+   "メイク☆マイダンス",
+   "ろりぽっぷ!!!!!!!",
+   "Unknown",
+   "シーソーゲーム",
+   "また会う日まで",
+   "始まりの宴!!!!!!!"
+  ]
  },
  {
   "date": "2026-09-23",
   "event": "『iDOL UNiVERS』",
   "venue": "大塚FUTURE",
-  "songs": []
+  "songs": [
+   "MY DREAM MY LIFE",
+   "アタックサイン",
+   "夏色ラムネ",
+   "未完成ヒロイン",
+   "SHINY DAYS"
+  ]
  },
  {
   "date": "2026-09-26",
@@ -4115,8 +4128,8 @@
  },
  {
   "date": "2026-10-03",
-  "event": "ライブ予定",
-  "venue": "（未発表）",
+  "event": "「FUTURE: SUPER LIVE 2026」32色のドリームアトラクション編",
+  "venue": "大塚FUTURE",
   "songs": []
  },
  {
@@ -4153,6 +4166,12 @@
   "date": "2026-10-31",
   "event": "ライブ予定",
   "venue": "（未発表）",
+  "songs": []
+ },
+ {
+  "date": "2026-11-06",
+  "event": "ろりぽっぷ!!!!!!! 2周年SPライブ",
+  "venue": "YOANI Live Station",
   "songs": []
  }
 ]
